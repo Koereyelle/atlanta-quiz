@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Which Atlanta Neighborhood Are You? | Quiz by Koe</title>
+<meta name="description" content="Answer 8 quick questions and find out which Metro Atlanta neighborhood matches your lifestyle. Free quiz by Koereyelle." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #7C6FCD;
+    --purple-light: #EAE7F8;
+    --purple-dark: #3D3580;
+    --gold: #C9A84C;
+    --gold-light: #FAF3E0;
+    --text: #1A1A2E;
+    --text-muted: #6B6B8A;
+    --text-hint: #A0A0BC;
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --border: rgba(124,111,205,0.15);
+    --border-strong: rgba(124,111,205,0.35);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(124,111,205,0.08) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(201,168,76,0.07) 0%, transparent 60%);
+  }
+
+  .page {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--purple-dark);
+    letter-spacing: 0.01em;
+  }
+  .logo span { color: var(--gold); }
+  .header-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+  }
+
+  /* Intro screen */
+  #intro { animation: fadeUp 0.5s ease both; }
+  .intro-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple);
+    background: var(--purple-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+  }
+  .intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 40px);
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .intro-title em { color: var(--purple); font-style: italic; }
+  .intro-body {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 480px;
+  }
+  .intro-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .intro-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .intro-meta-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--purple);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 32px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-start:hover { background: var(--purple-dark); transform: translateY(-1px); }
+  .btn-start svg { width: 16px; height: 16px; }
+
+  /* Progress */
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .progress-label { font-size: 12px; color: var(--text-hint); letter-spacing: 0.05em; text-transform: uppercase; }
+  .progress-count { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Question */
+  #quiz { display: none; animation: fadeUp 0.4s ease both; }
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 4vw, 26px);
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+  .opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+  .opt:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .opt.selected {
+    border: 1.5px solid var(--purple);
+    background: var(--purple-light);
+  }
+  .opt-icon { font-size: 22px; margin-bottom: 8px; display: block; line-height: 1; }
+  .opt-title { font-size: 14px; font-weight: 500; color: var(--text); display: block; margin-bottom: 3px; }
+  .opt-sub { font-size: 12px; color: var(--text-muted); display: block; line-height: 1.4; }
+  .opt.selected .opt-title { color: var(--purple-dark); }
+  .opt.selected .opt-sub { color: var(--purple); }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-nav {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-nav:hover { background: var(--purple-light); color: var(--purple-dark); }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-next {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: white;
+    font-weight: 500;
+    padding: 10px 24px;
+  }
+  .btn-next:hover { background: var(--purple-dark); border-color: var(--purple-dark); color: white; }
+  .btn-next:disabled { background: var(--border-strong); border-color: transparent; color: white; opacity: 0.5; cursor: not-allowed; }
+
+  /* Capture */
+  #capture { display: none; animation: fadeUp 0.4s ease both; }
+  .capture-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .capture-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 30px);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  .capture-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+    max-width: 440px;
+  }
+  .field { margin-bottom: 1rem; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(124,111,205,0.12);
+  }
+  .field input::placeholder { color: var(--text-hint); }
+  .error-msg {
+    font-size: 13px;
+    color: #C0392B;
+    margin-bottom: 0.75rem;
+    display: none;
+  }
+  .btn-reveal {
+    width: 100%;
+    background: var(--purple);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 0.25rem;
+  }
+  .btn-reveal:hover { background: var(--purple-dark); transform: translateY(-1px); }
+  .btn-reveal:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .privacy-note {
+    font-size: 12px;
+    color: var(--text-hint);
+    text-align: center;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+  }
+
+  /* Result */
+  #result { display: none; animation: fadeUp 0.5s ease both; }
+  .result-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple);
+    background: var(--purple-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 5vw, 34px);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+  .result-tagline {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    max-width: 500px;
+  }
+  .hood-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.75rem;
+  }
+  .hood-tag {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .result-card h3 {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .result-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .cta-card {
+    background: var(--purple-dark);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin-top: 1.75rem;
+  }
+  .cta-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+  .btn-cta {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 28px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+  .share-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .btn-share {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 9px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-share:hover { background: rgba(255,255,255,0.18); }
+  .btn-restart {
+    display: block;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: var(--text-hint);
+    cursor: pointer;
+    margin-top: 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: underline;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .options { grid-template-columns: 1fr; }
+    .intro-meta { flex-direction: column; gap: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="site-header">
+    <div class="logo">koe<span>.</span></div>
+    <div class="header-tag">Atlanta Real Estate</div>
+  </header>
+
+  <!-- Intro -->
+  <div id="intro">
+    <span class="intro-eyebrow">Free quiz</span>
+    <h1 class="intro-title">Which Metro Atlanta neighborhood <em>actually</em> fits your life?</h1>
+    <p class="intro-body">Answer 8 quick questions about your lifestyle, budget, and vibe — and we'll match you to your ideal Atlanta neighborhood, plus give you real market intel.</p>
+    <div class="intro-meta">
+      <div class="intro-meta-item"><div class="intro-meta-dot"></div>8 questions · under 2 minutes</div>
+      <div class="intro-meta-item"><div class="intro-meta-dot"></div>5 neighborhood profiles</div>
+      <div class="intro-meta-item"><div class="intro-meta-dot"></div>Free, no strings</div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">
+      Take the quiz
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </button>
+  </div>
+
+  <!-- Quiz -->
+  <div id="quiz">
+    <div class="progress-header">
+      <span class="progress-label" id="q-label">Question 1 of 8</span>
+      <span class="progress-count" id="q-count"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress" style="width:12.5%"></div></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="nav">
+      <button class="btn-nav" id="btn-back" onclick="goBack()" disabled>← Back</button>
+      <button class="btn-nav btn-next" id="btn-next" onclick="goNext()" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- Lead Capture -->
+  <div id="capture">
+    <span class="capture-eyebrow">Almost there</span>
+    <h2 class="capture-title">Where should we send your neighborhood match?</h2>
+    <p class="capture-sub">Enter your name and email to reveal your personalized Atlanta match — plus insider tips on what the market looks like right now.</p>
+    <div class="field">
+      <label>First name</label>
+      <input type="text" id="cap-name" placeholder="Your first name" />
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="cap-email" placeholder="you@email.com" />
+    </div>
+    <div class="error-msg" id="cap-error">Please enter your name and a valid email to continue.</div>
+    <button class="btn-reveal" id="cap-submit" onclick="submitLead()">Reveal my neighborhood match →</button>
+    <p class="privacy-note">No spam, ever. Just your results and occasional Atlanta market insights from Koe.</p>
+  </div>
+
+  <!-- Result -->
+  <div id="result">
+    <span class="result-eyebrow" id="result-eyebrow">Your match</span>
+    <h2 class="result-title" id="result-title"></h2>
+    <p class="result-tagline" id="result-tagline"></p>
+    <div class="hood-tags" id="hood-tags"></div>
+    <div class="result-card">
+      <h3>Your lifestyle fit</h3>
+      <p id="result-lifestyle"></p>
+    </div>
+    <div class="result-card">
+      <h3>What the market looks like</h3>
+      <p id="result-market"></p>
+    </div>
+    <div class="cta-card">
+      <h3>Ready to find your home?</h3>
+      <p id="result-cta-text"></p>
+      <a class="btn-cta" href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0N_Xj6F4rhScf_J1GKG8FLRFkaM7bEe1I5uf4bSOzUXaRHPOzdIaAvoE6YvAixYLgLPL_N-c1C" target="_blank" rel="noopener">Book a free call with Koe</a>
+      <div class="share-row">
+        <a class="btn-share" href="https://www.instagram.com/koereyelle" target="_blank" rel="noopener">Instagram</a>
+        <a class="btn-share" href="https://www.threads.net/@koereyelle" target="_blank" rel="noopener">Threads</a>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">Retake the quiz</button>
+  </div>
+
+</div>
+
+<script>
+const WEBHOOK = "https://script.google.com/macros/s/AKfycbz5nUUP8ZKuB1g41kmq3N5n-uuoDV6J6zkqZGAmysiZEB4xwQsTNa0a4a65XcSCtlklkA/exec";
+
+const questions = [
+  { text: "What's your ideal weekend vibe?", options: [
+    { icon: "🍽️", title: "Brunch & rooftops", sub: "Good food, good views", value: "urban" },
+    { icon: "🌳", title: "Parks & trails", sub: "Fresh air and green space", value: "nature" },
+    { icon: "🏡", title: "Quiet neighborhood walks", sub: "Peaceful and low-key", value: "suburban" },
+    { icon: "🎉", title: "Festivals & nightlife", sub: "Always something going on", value: "lively" }
+  ]},
+  { text: "How do you feel about your commute?", options: [
+    { icon: "🚶", title: "Walk everywhere", sub: "Car-free if possible", value: "walkable" },
+    { icon: "🚗", title: "Fine driving 20–30 min", sub: "As long as parking exists", value: "drive_ok" },
+    { icon: "🚇", title: "MARTA all the way", sub: "Love public transit", value: "transit" },
+    { icon: "🏠", title: "I work from home", sub: "Commute is irrelevant", value: "wfh" }
+  ]},
+  { text: "What matters most in your home search?", options: [
+    { icon: "📐", title: "Square footage & yard", sub: "Room to grow and breathe", value: "space" },
+    { icon: "✨", title: "Modern finishes & style", sub: "New build or fully renovated", value: "modern" },
+    { icon: "🧱", title: "Character & charm", sub: "Older homes with history", value: "character" },
+    { icon: "💰", title: "Best value for budget", sub: "More house, lower price", value: "value" }
+  ]},
+  { text: "What's your household situation?", options: [
+    { icon: "👶", title: "Family with kids", sub: "Schools and safety are #1", value: "family" },
+    { icon: "💑", title: "Couple or duo", sub: "Building our life together", value: "couple" },
+    { icon: "🙋", title: "Solo living", sub: "Just me — love my space", value: "solo" },
+    { icon: "🐾", title: "Pets in the picture", sub: "Dog parks are non-negotiable", value: "pets" }
+  ]},
+  { text: "Pick your Atlanta food scene preference:", options: [
+    { icon: "🥩", title: "Soul food & Southern classics", sub: "Comfort on every plate", value: "soul" },
+    { icon: "🍣", title: "Trendy & international", sub: "Omakase, fusion, farm-to-table", value: "trendy" },
+    { icon: "☕", title: "Coffee shops & local cafés", sub: "Laptop-friendly third places", value: "cafe" },
+    { icon: "🌮", title: "Diverse & affordable", sub: "Every cuisine, easy on the wallet", value: "diverse" }
+  ]},
+  { text: "What kind of neighbors do you vibe with?", options: [
+    { icon: "🎨", title: "Creatives & artists", sub: "Murals, music, maker culture", value: "creative" },
+    { icon: "👨‍💼", title: "Young professionals", sub: "Ambitious, connected crowd", value: "professional" },
+    { icon: "🏘️", title: "Established families", sub: "Long-term roots, block parties", value: "established" },
+    { icon: "🌍", title: "Diverse & international", sub: "Global cultures, welcoming energy", value: "diverse_nb" }
+  ]},
+  { text: "What's your relationship with outdoor space?", options: [
+    { icon: "🏊", title: "Community pool & amenities", sub: "HOA perks, low maintenance", value: "amenities" },
+    { icon: "🌿", title: "Big backyard for entertaining", sub: "Grill, garden, gatherings", value: "backyard" },
+    { icon: "🏞️", title: "Near trails & green spaces", sub: "Greenway, BeltLine, parks", value: "trails" },
+    { icon: "🏙️", title: "Rooftop > backyard", sub: "City views over grass", value: "rooftop" }
+  ]},
+  { text: "What's your budget range for a home?", options: [
+    { icon: "💵", title: "Under $350K", sub: "Affordable & attainable", value: "low" },
+    { icon: "💳", title: "$350K – $550K", sub: "Mid-range sweet spot", value: "mid" },
+    { icon: "🏦", title: "$550K – $800K", sub: "Upscale comfort", value: "high" },
+    { icon: "💎", title: "$800K+", sub: "Luxury all the way", value: "luxury" }
+  ]}
+];
+
+const budgetLabels = { low: "Under $350K", mid: "$350K–$550K", high: "$550K–$800K", luxury: "$800K+" };
+
+const results = {
+  beltline: {
+    label: "Atlanta BeltLine Corridor",
+    title: "You belong on the BeltLine 🌿",
+    tagline: "You want walkability, good food, culture, and community — all within steps of your front door. The BeltLine connects it all.",
+    neighborhoods: ["Old Fourth Ward", "Poncey-Highland", "Reynoldstown", "Grant Park", "Westview"],
+    lifestyle: "The BeltLine lifestyle is made for people who want to walk to coffee, bike to brunch, and catch a mural on the way home. You're active, social, and love a neighborhood with real energy.",
+    market: "Expect townhomes, renovated bungalows, and new condos. Prices range from the $300Ks in Westview to $700K+ in Old Fourth Ward. Demand stays high year-round.",
+    cta: "Ready to see what's available along the BeltLine right now?"
+  },
+  buckhead: {
+    label: "Buckhead / Sandy Springs",
+    title: "Buckhead is calling your name 🏙️",
+    tagline: "You love the finer things — great restaurants, polished surroundings, and a home that makes a statement.",
+    neighborhoods: ["Buckhead Village", "Sandy Springs", "Brookhaven", "Dunwoody"],
+    lifestyle: "Buckhead brings luxury retail, Michelin-caliber dining, and high-end gym culture. Sandy Springs and Dunwoody offer that plus top-rated schools and quieter streets.",
+    market: "Expect single-family homes in the $600Ks–$1M+ range. Luxury condos downtown start around $400K. Newer construction is plentiful.",
+    cta: "Let's explore Buckhead and Sandy Springs listings together."
+  },
+  decatur: {
+    label: "Decatur / East Atlanta",
+    title: "Decatur might be your perfect match 🎨",
+    tagline: "You value community, character, and a city that feels lived-in and real. Decatur delivers all three.",
+    neighborhoods: ["Decatur", "East Atlanta Village", "Kirkwood", "Oakhurst"],
+    lifestyle: "Decatur is walkable, quirky, and deeply community-rooted. East Atlanta Village has that indie music bar + late-night taco vibe. Kirkwood is one of Atlanta's fastest-growing pockets.",
+    market: "Craftsman bungalows and mid-century ranches dominate. Prices range from $280K–$600K depending on the sub-neighborhood. Strong resale history.",
+    cta: "Want to see what Decatur and East Atlanta have available?"
+  },
+  suburbs: {
+    label: "South Metro / Suburban Atlanta",
+    title: "South Metro is where your dollar stretches furthest 🏡",
+    tagline: "You want space, value, and a great community to raise your family — without paying intown prices.",
+    neighborhoods: ["Stockbridge", "McDonough", "Peachtree City", "Newnan", "Fayetteville"],
+    lifestyle: "South Metro offers excellent schools, massive square footage, and a pace of life that's genuinely slower. Peachtree City has 100+ miles of golf cart paths — iconic.",
+    market: "New construction and established neighborhoods both available. $250K–$500K gets you 2,000–3,500 sq ft easily. Best value in metro Atlanta.",
+    cta: "I can pull listings across South Metro — where would you like to start?"
+  },
+  eastcobb: {
+    label: "East Cobb / Marietta",
+    title: "East Cobb is your kind of community 🌳",
+    tagline: "Top schools, safe streets, established neighborhoods, and a suburban lifestyle that doesn't feel like a compromise.",
+    neighborhoods: ["East Cobb", "Marietta", "Kennesaw", "Woodstock", "Acworth"],
+    lifestyle: "East Cobb is one of the most sought-after school districts in Georgia. Marietta Square has a charming downtown with local dining, arts, and weekend farmers markets.",
+    market: "Single-family homes from $350K–$900K+ depending on lot size and school district. Strong equity growth. Low turnover means limited inventory — act fast.",
+    cta: "Let's find your East Cobb home before someone else does."
+  }
+};
+
+let current = 0, answers = [], selected = null, resultKey = null, leadName = '';
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  render();
+}
+
+function render() {
+  const q = questions[current];
+  document.getElementById('q-label').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('progress').style.width = ((current + 1) / questions.length * 100) + '%';
+  document.getElementById('btn-back').disabled = current === 0;
+  document.getElementById('btn-next').disabled = selected === null;
+  document.getElementById('btn-next').textContent = current === questions.length - 1 ? 'See my match →' : 'Next →';
+  document.getElementById('q-text').textContent = q.text;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.options.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (selected === i ? ' selected' : '');
+    btn.innerHTML = `<span class="opt-icon">${o.icon}</span><span class="opt-title">${o.title}</span><span class="opt-sub">${o.sub}</span>`;
+    btn.onclick = () => { selected = i; render(); };
+    opts.appendChild(btn);
+  });
+}
+
+function goNext() {
+  if (selected === null) return;
+  answers[current] = questions[current].options[selected].value;
+  if (current < questions.length - 1) {
+    current++;
+    selected = answers[current] !== undefined ? questions[current].options.findIndex(o => o.value === answers[current]) : null;
+    render();
+  } else {
+    resultKey = scoreResult();
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('capture').style.display = 'block';
+  }
+}
+
+function goBack() {
+  if (current > 0) {
+    answers[current] = questions[current].options[selected]?.value;
+    current--;
+    selected = answers[current] !== undefined ? questions[current].options.findIndex(o => o.value === answers[current]) : null;
+    render();
+  }
+}
+
+function scoreResult() {
+  const scores = { beltline: 0, buckhead: 0, decatur: 0, suburbs: 0, eastcobb: 0 };
+  const a = answers;
+  if (['urban','lively'].includes(a[0])) { scores.beltline += 3; scores.buckhead += 1; }
+  if (['nature','suburban'].includes(a[0])) { scores.eastcobb += 2; scores.suburbs += 3; }
+  if (a[1]==='walkable'||a[1]==='transit') { scores.beltline += 3; scores.decatur += 2; }
+  if (a[1]==='drive_ok'||a[1]==='wfh') { scores.suburbs += 2; scores.eastcobb += 2; }
+  if (a[2]==='character') { scores.decatur += 3; scores.beltline += 1; }
+  if (a[2]==='modern'||a[2]==='space') { scores.buckhead += 2; scores.suburbs += 2; }
+  if (a[2]==='value') { scores.suburbs += 3; scores.decatur += 1; }
+  if (a[3]==='family'||a[3]==='pets') { scores.eastcobb += 3; scores.suburbs += 2; }
+  if (a[3]==='solo'||a[3]==='couple') { scores.beltline += 2; scores.buckhead += 2; }
+  if (a[4]==='trendy') { scores.buckhead += 3; scores.beltline += 1; }
+  if (a[4]==='soul'||a[4]==='cafe') { scores.decatur += 2; scores.beltline += 2; }
+  if (a[4]==='diverse') { scores.suburbs += 1; scores.decatur += 2; }
+  if (a[5]==='creative') { scores.decatur += 3; scores.beltline += 2; }
+  if (a[5]==='professional') { scores.buckhead += 3; scores.beltline += 1; }
+  if (a[5]==='established') { scores.eastcobb += 3; scores.suburbs += 1; }
+  if (a[5]==='diverse_nb') { scores.decatur += 2; scores.suburbs += 1; }
+  if (a[6]==='trails') { scores.beltline += 3; scores.decatur += 1; }
+  if (a[6]==='backyard') { scores.suburbs += 3; scores.eastcobb += 2; }
+  if (a[6]==='amenities') { scores.eastcobb += 2; scores.suburbs += 1; }
+  if (a[6]==='rooftop') { scores.buckhead += 3; scores.beltline += 1; }
+  if (a[7]==='low') { scores.suburbs += 3; scores.decatur += 1; }
+  if (a[7]==='mid') { scores.beltline += 1; scores.decatur += 2; scores.eastcobb += 2; }
+  if (a[7]==='high') { scores.buckhead += 2; scores.eastcobb += 2; }
+  if (a[7]==='luxury') { scores.buckhead += 4; }
+  return Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+}
+
+async function submitLead() {
+  const name = document.getElementById('cap-name').value.trim();
+  const email = document.getElementById('cap-email').value.trim();
+  const errorEl = document.getElementById('cap-error');
+  const btn = document.getElementById('cap-submit');
+  if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorEl.style.display = 'block'; return;
+  }
+  errorEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Just a moment...';
+  leadName = name;
+  try {
+    await fetch(WEBHOOK, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, neighborhood: results[resultKey].label, budget: budgetLabels[answers[7]] || answers[7] })
+    });
+  } catch(e) {}
+  document.getElementById('capture').style.display = 'none';
+  renderResult();
+}
+
+function renderResult() {
+  const r = results[resultKey];
+  document.getElementById('result-eyebrow').textContent = leadName ? `Your match, ${leadName}` : 'Your match';
+  document.getElementById('result-title').textContent = r.title;
+  document.getElementById('result-tagline').textContent = r.tagline;
+  document.getElementById('result-lifestyle').textContent = r.lifestyle;
+  document.getElementById('result-market').textContent = r.market;
+  document.getElementById('result-cta-text').textContent = r.cta;
+  const tags = document.getElementById('hood-tags');
+  tags.innerHTML = r.neighborhoods.map(n => `<span class="hood-tag">${n}</span>`).join('');
+  document.getElementById('result').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  current = 0; answers = []; selected = null; resultKey = null; leadName = '';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('intro').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
